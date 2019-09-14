@@ -25,9 +25,9 @@ periods = pd.PeriodIndex(year=data.year, quarter=data.quarter,
 columns = pd.Index(['realgdp', 'infl', 'unemp'], name='item')
 data = data.reindex(columns=columns)
 data.index = periods.to_timestamp('D')
-print(data.head())  # 宽格式， 每行代表一次观察，item下的种类都堆叠起来
+print(data.head())  # 宽格式， 每行代表一次观察，item下的种类都堆叠起来,同时显示多个value
 ldata = data.stack().reset_index().rename(columns={0: 'value'})   #stack将DataFrame变成层次化Series
-print(ldata.head())  # 长格式， 一次观察被分为多个种类的堆叠
+print(ldata.head())  # 长格式， 一次观察只显示一类的一个value
 
 pivoted = ldata.pivot('date', 'item', 'value')  # 用pivot快速转换长格式为宽格式  .pivot(行索引，列索引，数据)
 print(pivoted.head())
@@ -38,13 +38,13 @@ print(pivoted1['value'].head())  # 可以指定外层列查看（某个数据集
 
 
 #      将宽格式(stacked)旋转为长格式(long): melt
-data2 = pd.DataFrame({'key': ['foo', 'bar', 'baz'],
+data2 = pd.DataFrame({'key': ['foo', 'app', 'baz'],
                    'A': [1, 2, 3],
                    'B': [4, 5, 6],
                    'C': [7, 8, 9]})
-print(data2.head())
+print(data2,'data2')
 melted = data2.melt('key')   #.melt() 需要指定的是 用作分类依据的列，比如商品类型，剩下的是数据
-print(melted)     #即变成了长格式
+print(melted,'melted')     #即变成了长格式
 reshaped = melted.pivot('key','variable','value')
 print(reshaped.reset_index())
 

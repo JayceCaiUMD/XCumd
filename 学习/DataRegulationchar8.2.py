@@ -8,18 +8,20 @@ df1 = pd.DataFrame({'key': ['b', 'b', 'a', 'c', 'a', 'a', 'b'],
 df2 = pd.DataFrame({'key': ['a', 'b', 'd'],
                     'data2': range(3)})
 
+print(df1)
+print(df2)
 dfm1 = pd.merge(df1, df2, on='key')  # 多对一的合并,重叠列的 交集 会被当做'key'
-print(dfm1)
+print(dfm1,'=dfm1')
 
 df3 = pd.DataFrame({'lkey': ['b', 'b', 'a', 'c', 'a', 'a', 'b'],
                     'data1': range(7)})
 
 df4 = pd.DataFrame({'rkey': ['a', 'b', 'd'],
                     'data2': range(3)})
-dfm2 = pd.merge(df3, df4, left_on='lkey', right_on='rkey')  # 如果列名不同的话可以分别进行指定，合并的列默认是交集
+dfm2 = pd.merge(df3, df4, left_on='lkey', right_on='rkey',how='inner')  # 如果列名不同的话可以分别进行指定，合并的列默认是交集
 print(dfm2, '=dfm2')
 dfm3 = pd.merge(df3, df4, left_on='lkey', right_on='rkey', how='outer')  # how='outer'则是 并集
-print(dfm3)
+print(dfm3,'=dfm3')
 
 left = pd.DataFrame({'key1': ['foo', 'foo', 'bar'],
                      'key2': ['one', 'two', 'one'],
@@ -44,7 +46,7 @@ righth = pd.DataFrame(np.arange(12).reshape((6, 2)),
                              [2001, 2000, 2000, 2000, 2001, 2002]],
                       columns=['event1', 'event2'])
 dfm5 = pd.merge(lefth, righth, left_on=['key1', 'key2'], right_index=True, how='outer')  # 指明用作合并键的多个列
-print(dfm5.sort_values(by=['key1', 'key2']))
+print(dfm5.sort_values(by=['key1', 'key2']),'dfm5')
 
 #       轴向连接
 arr = np.arange(12).reshape((3, 4))
@@ -52,23 +54,23 @@ print(np.concatenate([arr, arr], axis=1))
 
 s1 = pd.Series([0, 1], index=['a', 'b'])
 s2 = pd.Series([2, 3, 4], index=['c', 'd', 'e'])
-s3 = pd.Series([5, 6], index=['f', 'g'])
+s3 = pd.Series([5, 6], index=['f', 'a'])
 
 data1 = pd.concat([s1, s2, s3])  # 默认在axis=0上工作,沿着行轴将数据堆起来
 data2 = pd.concat([s1, s2, s3], axis=1, sort=True)  # axis=1则会生成DataFrame
 print(data2)
 
-result = pd.concat([s1, s2, s3], keys=['one', 'two', 'three'])  # 使用key创建层次化被concat的索引
-print(result)  # 也可用于区分连接到一起的片段
+result = pd.concat([s1, s2, s3], keys=['one', 'two', 'three'])  # 用key创建一个层次化索引，就可以将concat的对象区分开
+print(result)
 
-data3 = pd.concat({'level1': df1, 'level2': df2}, axis=1)  # DataFrame的index会进行合并（并集）
-print(data3)  # 如果传入DataFrame构成的字典，字典的key变为外层索引，DataFrame的columns变成内层索引
+data3 = pd.concat({'level1': df1, 'level2': df2}, axis=1,join='outer')  # DataFrame的index会进行合并（默认并集）
+print(data3,'=data3')  #同样也可不用dict，用keys区分开来
 
 df5 = pd.DataFrame(np.random.randn(3, 4), columns=['a', 'b', 'c', 'd'])
-df6 = pd.DataFrame(np.random.randn(2, 3), columns=['b', 'd', 'a'])
-data4 = pd.concat([df5, df6], ignore_index=True)  # 合并后的DataFrame的index无意义，则放弃连接轴上的index
+df6 = pd.DataFrame(np.random.rand(2, 3)*100, columns=['b', 'd', 'a'])
+data4 = pd.concat([df5, df6], ignore_index=True,join='inner')  # 合并后的DataFrame的index无意义，则放弃连接轴上的index
 print(data4)
-# 与merge方法不同，concat使得数据在某一条轴上堆叠，用 join规定另一条轴数据合并方式，默认是outer
+# 与merge方法不同，concat使得数据在某一条轴上堆叠，用 join规定 另一条轴 数据合并方式，默认是outer
 # 对merge来说，选某一列作为key，key的合并方式由 how决定，默认是inner
 
 
