@@ -37,7 +37,7 @@ for dtype, data in df1.groupby(by=df1.dtypes, axis=1):  # axis=1,对列进行分
     print(data)
 
 mean3 = df1.groupby(['key1', 'key2'])['data1'].mean()  # 对某列数据进行分组操作的 简单写法
-print(mean3)  # 如果索引传入单个列，则返回Series；传入多个索引(列表)，则返回DataFrame
+print(mean3,'=mean3')  # 如果索引传入单个列，则返回Series；传入多个索引(列表)，则返回DataFrame
 
 # 利用字典或者Series 进行分组
 people = pd.DataFrame(np.random.randn(5, 5),
@@ -47,7 +47,7 @@ people.iloc[2, 1:3] = np.nan
 mapping = {'a': 'red', 'b': 'red', 'c': 'blue',
            'd': 'blue', 'e': 'red', 'f': 'orange'}  # 分组键: 3. 包含映射关系的dict
 
-by_dict = people.groupby(mapping, axis=1).mean()
+by_dict = people.groupby([mapping], axis=1).mean()
 print(by_dict)
 map_series = pd.Series(mapping)  # 4. Series (利用index与value的索引关系)
 by_series = people.groupby(map_series, axis=1).count()
